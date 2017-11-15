@@ -11,7 +11,7 @@ AutoDot.Default = {
 
 AutoDot:RegisterEvent("ADDON_LOADED")
 AutoDot:RegisterEvent("PLAYER_TARGET_CHANGED")
-AutoDot:RegisterEvent("SPELLCAST_START")
+
 function AutoDot:OnEvent()
 	if event == "ADDON_LOADED" and arg1 == "AutoDot" then
 		DEFAULT_CHAT_FRAME:AddMessage("AutoDot: loaded")
@@ -29,9 +29,6 @@ function AutoDot:OnEvent()
 		AutoDot.Settings["Curse of Agony"] = 0
 		AutoDot.Settings["Corruption"] = 0
 		AutoDot.Settings["Siphon Life"] = 0
-	elseif event == "SPELLCAST_START" then
-		DEFAULT_CHAT_FRAME:AddMessage(arg1)
-	end
 end
 
 function AutoDot:Cast()
