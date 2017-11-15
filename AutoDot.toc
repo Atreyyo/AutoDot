@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: AutoDot
+## Author: Atreyyo
+## Version: 1
+## Notes: dots for everyone
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariablesPerCharacter: AutoDot.Settings
+
+AutoDot.lua
