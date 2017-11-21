@@ -11,7 +11,11 @@ AutoDot.Default = {
 
 AutoDot:RegisterEvent("ADDON_LOADED")
 AutoDot:RegisterEvent("PLAYER_TARGET_CHANGED")
-
+AutoDot:RegisterEvent("SPELLCAST_START")
+AutoDot:RegisterEvent("SPELLCAST_INTERRUPTED")
+AutoDot:RegisterEvent("SPELLCAST_FAILED")
+AutoDot:RegisterEvent("SPELLCAST_DELAYED")
+AutoDot:RegisterEvent("SPELLCAST_STOP")
 -- test
 
 AutoDot:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS")
@@ -55,10 +59,11 @@ function AutoDot:OnEvent()
 		AutoDot:UnregisterEvent("ADDON_LOADED")
 		if AutoDot.Settings == nil then
 			AutoDot.Settings = AutoDot.Default
-			AutoDot.Settings["Curse of Agony"] = 0
-			AutoDot.Settings["Corruption"] = 0
-			AutoDot.Settings["Siphon Life"] = 0
 		end
+		AutoDot.Settings["IsCasting"] = false
+		AutoDot.Settings["Curse of Agony"] = 0
+		AutoDot.Settings["Corruption"] = 0
+		AutoDot.Settings["Siphon Life"] = 0
 		SLASH_AUTODOT1 = "/autodot";
 		SlashCmdList["AUTODOT"] = AutoDot.Cast;
 	elseif event == "PLAYER_TARGET_CHANGED" then
@@ -66,6 +71,17 @@ function AutoDot:OnEvent()
 		AutoDot.Settings["Corruption"] = 0
 		AutoDot.Settings["Siphon Life"] = 0
 		
+	
+	elseif event == "SPELLCAST_START" then
+		AutoDot.Settings["IsCasting"] = true
+	elseif event == "SPELLCAST_INTERRUPTED" then
+		AutoDot.Settings["IsCasting"] = false
+	elseif event == "SPELLCAST_FAILED" then
+		AutoDot.Settings["IsCasting"] = false
+	elseif event == "SPELLCAST_DELAYED" then
+	
+	elseif event == "SPELLCAST_STOP" then
+		AutoDot.Settings["IsCasting"] = false
 	-- test
 	
 --[[
@@ -124,11 +140,11 @@ function AutoDot:OnEvent()
 				end
 			end
 		end
-		DEFAULT_CHAT_FRAME:AddMessage(arg1)
+		--DEFAULT_CHAT_FRAME:AddMessage(arg1)
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE" then
-		DEFAULT_CHAT_FRAME:AddMessage(arg1.."CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE")
+		--DEFAULT_CHAT_FRAME:AddMessage(arg1.."CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE")
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE" then		-- when dots land on enemy players
-		DEFAULT_CHAT_FRAME:AddMessage(arg1.."CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE")
+		--DEFAULT_CHAT_FRAME:AddMessage(arg1.."CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE")
 		--[[
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE" then
 		DEFAULT_CHAT_FRAME:AddMessage(arg1.."CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE")
@@ -144,17 +160,17 @@ function AutoDot:OnEvent()
 end
 
 function AutoDot:Cast()
-	if (AutoDot.Settings["Curse of Agony"] == 0 or (GetTime()-AutoDot.Settings["Curse of Agony"] > 24)) and not AutoDot:GetSpellCooldown("Curse of Agony") then
+	if (AutoDot.Settings["Curse of Agony"] == 0 or (GetTime()-AutoDot.Settings["Curse of Agony"] > 24)) and not AutoDot:GetSpellCooldown("Curse of Agony") and not AutoDot.Settings["IsCasting"] then
 		CastSpellByName("Curse of Agony")
 		AutoDot.Settings["Curse of Agony"] = GetTime()
 		return
 	end
-	if (AutoDot.Settings["Corruption"] == 0 or (GetTime()-AutoDot.Settings["Corruption"] > 18)) and not AutoDot:GetSpellCooldown("Corruption") then
+	if (AutoDot.Settings["Corruption"] == 0 or (GetTime()-AutoDot.Settings["Corruption"] > 18)) and not AutoDot:GetSpellCooldown("Corruption") and not AutoDot.Settings["IsCasting"] then
 		CastSpellByName("Corruption")
 		AutoDot.Settings["Corruption"] = GetTime()
 		return
 	end
-	if (AutoDot.Settings["Siphon Life"] == 0 or (GetTime()-AutoDot.Settings["Siphon Life"] > 30)) and not AutoDot:GetSpellCooldown("Siphon Life") then
+	if (AutoDot.Settings["Siphon Life"] == 0 or (GetTime()-AutoDot.Settings["Siphon Life"] > 30)) and not AutoDot:GetSpellCooldown("Siphon Life") and not AutoDot.Settings["IsCasting"] then
 		CastSpellByName("Siphon Life")
 		AutoDot.Settings["Siphon Life"] = GetTime()
 		return
